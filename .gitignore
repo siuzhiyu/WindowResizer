@@ -1,0 +1,27 @@
+# Build outputs
+WindowResizer-ImGui/project/Release/
+
+# IDE files
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Debug files
+*.pdb
+*.idb
+*.ilk
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Backup files
+*.bak
+*.old

@@ -33,7 +33,7 @@ A lightweight tool to quickly resize any window with a beautiful ImGui-based int
 
 - Visual Studio 2022 (v143 toolset)
 - Windows SDK
-- DirectX 9 SDK (usually included with Windows SDK / 通常已包含在 Windows SDK 中)
+- DirectX 11 SDK (usually included with Windows SDK / 通常已包含在 Windows SDK 中)
 
 ### Build Steps / 编译步骤
 
@@ -65,14 +65,25 @@ The output executable will be in `project\Release\WindowResizer-imgui.exe`
 
 ```
 WindowResizer-ImGui/
-├── src/
-│   └── main.cpp                              # Main application code / 主程序代码
+├── src/                                      # Main application code / 主程序代码
+│   ├── main.cpp
+│   ├── App.h
+│   ├── Config.cpp/h
+│   ├── DirectXManager.cpp/h
+│   ├── FontConfig.cpp/h
+│   ├── LanguageManager.cpp/h
+│   ├── RenderUI.cpp/h
+│   ├── Settings.cpp/h
+│   ├── Theme.cpp/h
+│   ├── Utils.cpp/h
+│   └── WindowManager.cpp/h
 ├── imgui/
 │   ├── backends/
-│   │   ├── imgui_impl_dx9.cpp/h              # DirectX9 backend / DirectX9 后端
+│   │   ├── imgui_impl_dx11.cpp/h             # DirectX11 backend / DirectX11 后端
 │   │   └── imgui_impl_win32.cpp/h            # Win32 backend / Win32 后端
 │   └── imgui*.cpp/h                          # ImGui core files / ImGui 核心文件
 ├── project/
+│   ├── LXGWWenKaiLite-Regular.ttf            # Font file / 字体文件
 │   ├── WindowResizer-imgui.vcxproj           # VS project file / VS 项目文件
 │   └── WindowResizer-imgui.vcxproj.filters   # VS project filters / VS 项目过滤器
 ├── res/
@@ -81,7 +92,8 @@ WindowResizer-ImGui/
 ├── WindowResizer-imgui.sln                   # VS solution file / VS 解决方案文件
 ├── LICENSE                                   # License file / 许可证文件
 ├── README.md                                 # This file / 本文件
-└── screenshot.png                            # Screenshot / 程序截图
+├── screenshot.png                            # Screenshot / 程序截图
+└── uninstall.bat                             # Uninstall script / 卸载脚本
 ```
 
 ## License / 许可证
@@ -101,4 +113,4 @@ See the [LICENSE](LICENSE) file for details.
 
 - Original author: inkuang (https://github.com/inkuang/WindowResizer)
 - ImGui: Omar Cornut (https://github.com/ocornut/imgui)
-- ImGui version: siuzhiyu (https://github.com/siuzhiyu/WindowResizer)
+- ImGui version: Latest version with DirectX11 backend
