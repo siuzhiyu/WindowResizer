@@ -441,7 +441,7 @@ void RenderLeftPanel()
     ImGui::RadioButton(LANG("custom_size"), &g_appState.nModeSelect, 1);
     ImGui::BeginDisabled(g_appState.nModeSelect != 1);
 
-    ImGui::Text("                   %s", LANG("custom_width_label"));
+    ImGui::Text("               %s", LANG("custom_width_label"));
     ImGui::SameLine();
     ImGui::SetCursorPosX(120);
     ImGui::PushItemWidth(180);
@@ -453,7 +453,7 @@ void RenderLeftPanel()
     ImGui::PopItemWidth();
     ImGui::Spacing();
 
-    ImGui::Text("                   %s", LANG("custom_height_label"));
+    ImGui::Text("               %s", LANG("custom_height_label"));
     ImGui::SameLine();
     ImGui::SetCursorPosX(120);
     ImGui::PushItemWidth(180);

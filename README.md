@@ -57,9 +57,6 @@ A tool to quickly resize any window with a beautiful ImGui-based interface.
 
 ---
 
-## Screenshot / 程序截图
-
-![Screenshot](screenshot.png)
 
 ## Build / 编译
 
@@ -93,40 +90,7 @@ A tool to quickly resize any window with a beautiful ImGui-based interface.
 3. 点击要调整的目标窗口
 4. 选择调整模式并点击"应用设置"
 
-## Project Structure / 项目结构
 
-```
-WindowResizer-ImGui/
-├── src/                                      # Main application code / 主程序代码
-│   ├── main.cpp
-│   ├── App.h
-│   ├── Config.cpp/h
-│   ├── DirectXManager.cpp/h
-│   ├── FontConfig.cpp/h
-│   ├── LanguageManager.cpp/h
-│   ├── RenderUI.cpp/h
-│   ├── Settings.cpp/h
-│   ├── Theme.cpp/h
-│   ├── Utils.cpp/h
-│   └── WindowManager.cpp/h
-├── imgui/
-│   ├── backends/
-│   │   ├── imgui_impl_dx11.cpp/h             # DirectX11 backend / DirectX11 后端
-│   │   └── imgui_impl_win32.cpp/h            # Win32 backend / Win32 后端
-│   └── imgui*.cpp/h                          # ImGui core files / ImGui 核心文件
-├── project/
-│   ├── LXGWWenKaiLite-Regular.ttf            # Font file / 字体文件
-│   ├── WindowResizer-imgui.vcxproj           # VS project file / VS 项目文件
-│   └── WindowResizer-imgui.vcxproj.filters   # VS project filters / VS 项目过滤器
-├── res/
-│   ├── WindowResizer.ico                     # Application icon / 应用图标
-│   └── resource.rc                           # Resource file / 资源文件
-├── WindowResizer-imgui.sln                   # VS solution file / VS 解决方案文件
-├── LICENSE                                   # License file / 许可证文件
-├── README.md                                 # This file / 本文件
-├── screenshot.png                            # Screenshot / 程序截图
-└── uninstall.bat                             # Uninstall script / 卸载脚本
-```
 
 ## License / 许可证
 

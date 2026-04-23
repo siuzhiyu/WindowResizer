@@ -16,6 +16,9 @@
 #include <cstdio>
 #include <windows.h>
 
+// 资源定义
+#define FONT_RESOURCE 102
+
 AppState g_appState;
 HWND g_hMainWindow = nullptr;
 HWND g_hViewportWindow = nullptr;
@@ -103,22 +106,38 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     font_cfg.PixelSnapH = true;  // 像素对齐
     font_cfg.MergeMode = false;  // 不合并字体
     
-    // 尝试加载项目目录中的 LXGWWenKaiLite 字体
-    const char* fontPaths[] = {
-        "LXGWWenKaiLite-Regular.ttf",  // 相对路径
-        "C:\\Windows\\Fonts\\msyh.ttc",
-        "C:\\Windows\\Fonts\\simsun.ttc",
-        "C:\\Windows\\Fonts\\simhei.ttf",
-        nullptr
-    };
-    const char* selectedFont = nullptr;
-    for (int i = 0; fontPaths[i]; i++) { if (GetFileAttributesA(fontPaths[i]) != INVALID_FILE_ATTRIBUTES) { selectedFont = fontPaths[i]; break; } }
-    
-    if (selectedFont) { 
-        io.Fonts->AddFontFromFileTTF(selectedFont, DebugConfig::FontBaseSize * font_scale, &font_cfg, custom_glyph_ranges); 
+    // 从资源中加载字体
+    bool fontLoaded = false;
+    HRSRC hFontResource = FindResourceW(GetModuleHandle(nullptr), MAKEINTRESOURCEW(FONT_RESOURCE), RT_RCDATA);
+    if (hFontResource)
+    {
+        HGLOBAL hFontGlobal = LoadResource(nullptr, hFontResource);
+        if (hFontGlobal)
+        {
+            void* pFontData = LockResource(hFontGlobal);
+            if (pFontData)
+            {
+                DWORD fontSize = SizeofResource(nullptr, hFontResource);
+                io.Fonts->AddFontFromMemoryTTF(pFontData, fontSize, DebugConfig::FontBaseSize * font_scale, &font_cfg, custom_glyph_ranges);
+                fontLoaded = true;
+            }
+        }
     }
-    else { 
-        io.Fonts->AddFontDefault(&font_cfg); 
+
+    // 如果内嵌字体加载失败，尝试使用系统字体"微软雅黑"
+    if (!fontLoaded)
+    {
+        ImFont* systemFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\msyh.ttc", DebugConfig::FontBaseSize * font_scale, &font_cfg, custom_glyph_ranges);
+        if (systemFont)
+        {
+            fontLoaded = true;
+        }
+    }
+
+    // 如果还是失败，使用 ImGui 默认字体
+    if (!fontLoaded)
+    {
+        io.Fonts->AddFontDefault(&font_cfg);
     }
 
     g_appState.bThemeChanged = true;
