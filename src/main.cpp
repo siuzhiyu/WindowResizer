@@ -31,12 +31,9 @@ HWND g_hTargetWindow = nullptr;
 wchar_t g_szWindowTitle[256] = L"";
 char g_szWindowTitleUTF8[512] = "";
 int g_nCurWidth = 0, g_nCurHeight = 0;
-<<<<<<< HEAD
 int g_nInitialWidth = 0, g_nInitialHeight = 0;
 int g_nCurrentWidth = 0, g_nCurrentHeight = 0;
 int g_nScaleBaseWidth = 0, g_nScaleBaseHeight = 0;
-=======
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
 int g_nModeSelect = 0;
 int g_nSelectedResolution = 6;
 int g_nScaleIndex = 2;
@@ -45,18 +42,11 @@ int g_nWidth = 800, g_nHeight = 600;
 bool g_bLockRatio = false;
 double g_dLockedAspectRatio = 0.0;
 bool g_bHasAspectRatio = false;
-<<<<<<< HEAD
-=======
-int g_nTempOriginalWidth = 0, g_nTempOriginalHeight = 0;
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
 bool g_bClickedSetPercentage = false;
 bool g_bIsSetMaxSize = false;
 bool g_bFindingWindow = false;
 bool g_bShowAbout = false;
-<<<<<<< HEAD
 bool g_bShowHelp = false;
-=======
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
 
 // 字体指针
 ImFont* g_pFontDefault = nullptr;
@@ -92,16 +82,11 @@ void RenderUI()
     
     if (ImGui::Begin("Window Resizer", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
     {
-<<<<<<< HEAD
         // 顶部按钮区域
         ImGui::PushFont(g_pFontSmall);
         if (ImGui::Button("使用说明", ImVec2(60, 20)))
             g_bShowHelp = true;
         ImGui::SameLine();
-=======
-        // 关于按钮
-        ImGui::PushFont(g_pFontSmall);
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
         if (ImGui::Button("关于", ImVec2(30, 20)))
             g_bShowAbout = true;
         ImGui::PopFont();
@@ -345,7 +330,6 @@ void RenderUI()
             ImGui::EndPopup();
         }
     }
-<<<<<<< HEAD
 
     // 使用说明弹窗
     if (g_bShowHelp)
@@ -382,8 +366,6 @@ void RenderUI()
             ImGui::EndPopup();
         }
     }
-=======
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
 }
 
 void InitAppData()
@@ -423,11 +405,8 @@ void UpdateSizeShow(int width, int height)
 {
     g_nCurWidth = width;
     g_nCurHeight = height;
-<<<<<<< HEAD
     g_nCurrentWidth = width;
     g_nCurrentHeight = height;
-=======
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
 }
 
 bool IsWindowValid()
@@ -469,7 +448,6 @@ void CheckWindowValidity()
             }
             RECT rect;
             GetWindowRect(pWnd, &rect);
-<<<<<<< HEAD
             int detectedWidth = rect.right - rect.left;
             int detectedHeight = rect.bottom - rect.top;
             g_nInitialWidth = detectedWidth;
@@ -481,13 +459,6 @@ void CheckWindowValidity()
             g_nWidth = detectedWidth;
             g_nHeight = detectedHeight;
             UpdateSizeShow(detectedWidth, detectedHeight);
-=======
-            g_nTempOriginalWidth = rect.right - rect.left;
-            g_nTempOriginalHeight = rect.bottom - rect.top;
-            g_nWidth = g_nTempOriginalWidth;
-            g_nHeight = g_nTempOriginalHeight;
-            UpdateSizeShow(g_nTempOriginalWidth, g_nTempOriginalHeight);
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
             g_bClickedSetPercentage = false;
             g_bIsSetMaxSize = false;
             g_bFindingWindow = false;
@@ -500,17 +471,12 @@ void CheckWindowValidity()
         g_szWindowTitleUTF8[0] = '\0';
         g_nCurWidth = 0;
         g_nCurHeight = 0;
-<<<<<<< HEAD
         g_nInitialWidth = 0;
         g_nInitialHeight = 0;
         g_nCurrentWidth = 0;
         g_nCurrentHeight = 0;
         g_nScaleBaseWidth = 0;
         g_nScaleBaseHeight = 0;
-=======
-        g_nTempOriginalWidth = 0;
-        g_nTempOriginalHeight = 0;
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
         g_nWidth = 0;
         g_nHeight = 0;
         g_bClickedSetPercentage = false;
@@ -531,22 +497,17 @@ void ApplySelectedMode()
         {
             nWidth = g_arrResolutions[g_nSelectedResolution].width;
             nHeight = g_arrResolutions[g_nSelectedResolution].height;
-<<<<<<< HEAD
             g_nCurrentWidth = nWidth;
             g_nCurrentHeight = nHeight;
         }
         g_nScaleBaseWidth = 0;
         g_nScaleBaseHeight = 0;
-=======
-        }
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
         break;
     case 1:
         nWidth = g_nWidth;
         nHeight = g_nHeight;
         if (nWidth <= 0 || nHeight <= 0)
             return;
-<<<<<<< HEAD
         g_nCurrentWidth = nWidth;
         g_nCurrentHeight = nHeight;
         g_nScaleBaseWidth = 0;
@@ -573,32 +534,6 @@ void ApplySelectedMode()
         nHeight = (int)(g_nScaleBaseHeight * g_fCustomScale);
         g_nCurrentWidth = nWidth;
         g_nCurrentHeight = nHeight;
-=======
-        break;
-    case 2:
-        if (!g_bClickedSetPercentage)
-        {
-            RECT rect;
-            GetWindowRect(g_hTargetWindow, &rect);
-            g_nTempOriginalWidth = rect.right - rect.left;
-            g_nTempOriginalHeight = rect.bottom - rect.top;
-        }
-        nWidth = (int)(g_nTempOriginalWidth * g_arrScaleValues[g_nScaleIndex]);
-        nHeight = (int)(g_nTempOriginalHeight * g_arrScaleValues[g_nScaleIndex]);
-        g_bClickedSetPercentage = true;
-        break;
-    case 3:
-        if (!g_bClickedSetPercentage)
-        {
-            RECT rect;
-            GetWindowRect(g_hTargetWindow, &rect);
-            g_nTempOriginalWidth = rect.right - rect.left;
-            g_nTempOriginalHeight = rect.bottom - rect.top;
-        }
-        nWidth = (int)(g_nTempOriginalWidth * g_fCustomScale);
-        nHeight = (int)(g_nTempOriginalHeight * g_fCustomScale);
-        g_bClickedSetPercentage = true;
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
         break;
     }
 
@@ -633,12 +568,6 @@ void MaximizeWindow()
         return;
     ShowWindow(g_hTargetWindow, SW_SHOWMAXIMIZED);
     g_bIsSetMaxSize = true;
-<<<<<<< HEAD
-=======
-    RECT rect;
-    GetWindowRect(g_hTargetWindow, &rect);
-    UpdateSizeShow(rect.right - rect.left, rect.bottom - rect.top);
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
     g_bClickedSetPercentage = false;
 }
 
@@ -648,7 +577,6 @@ void RestoreWindow()
         return;
     if (g_bIsSetMaxSize)
         ShowWindow(g_hTargetWindow, SW_RESTORE);
-<<<<<<< HEAD
     SetWindowPos(g_hTargetWindow, NULL, 0, 0, g_nInitialWidth, g_nInitialHeight, SWP_NOZORDER | SWP_NOMOVE);
     g_nCurrentWidth = g_nInitialWidth;
     g_nCurrentHeight = g_nInitialHeight;
@@ -656,9 +584,6 @@ void RestoreWindow()
     g_nScaleBaseHeight = 0;
     g_nWidth = g_nInitialWidth;
     g_nHeight = g_nInitialHeight;
-=======
-    SetWindowPos(g_hTargetWindow, NULL, 0, 0, g_nTempOriginalWidth, g_nTempOriginalHeight, SWP_NOZORDER | SWP_NOMOVE);
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
     g_nModeSelect = 0;
     RECT rect;
     GetWindowRect(g_hTargetWindow, &rect);
@@ -684,11 +609,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     int posX = (screenWidth - windowWidth) / 2;
     int posY = (screenHeight - windowHeight) / 2;
     
-<<<<<<< HEAD
     HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Window Resizer v1.0", WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, posX, posY,
-=======
-    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Window Resizer", WS_OVERLAPPEDWINDOW, posX, posY, 
->>>>>>> 0da5372a5a92a59c32cb7f9c701da2272d192184
         windowWidth, windowHeight, nullptr, nullptr, wc.hInstance, nullptr);
 
     HICON hIcon = LoadIconW(wc.hInstance, MAKEINTRESOURCEW(101));
