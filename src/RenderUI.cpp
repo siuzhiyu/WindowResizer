@@ -281,9 +281,9 @@ void RenderAboutPopup()
     ImGui::BulletText(LANG("original_author"));
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 1.0f, 1.0f));
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.1f, 0.1f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.1f, 0.1f, 0.5f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.1f, 0.5f));
-    if (ImGui::Button("GitHub: https://github.com/inkuang/WindowResizer"))
+    if (ImGui::Button("GitHub: https://github.com/inkuang/WindowResizer", ImVec2(380, 0)))
         ShellExecuteA(NULL, "open", "https://github.com/inkuang/WindowResizer", NULL, NULL, SW_SHOWNORMAL);
     ImGui::PopStyleColor(4);
 
@@ -295,9 +295,9 @@ void RenderAboutPopup()
     ImGui::BulletText(LANG("imgui_author"));
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 1.0f, 1.0f));
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.1f, 0.1f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.1f, 0.1f, 0.5f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.1f, 0.5f));
-    if (ImGui::Button("GitHub: https://github.com/siuzhiyu/WindowResizer"))
+    if (ImGui::Button("GitHub: https://github.com/siuzhiyu/WindowResizer", ImVec2(380, 0)))
         ShellExecuteA(NULL, "open", "https://github.com/siuzhiyu/WindowResizer", NULL, NULL, SW_SHOWNORMAL);
     ImGui::PopStyleColor(4);
 
