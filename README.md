@@ -25,6 +25,20 @@ A tool to quickly resize any window with a beautiful ImGui-based interface.
 
 ---
 
+## Usage / 使用方法
+
+1. Run `WindowResizer-imgui.exe`
+2. Click "开始查找窗口" button
+3. Click on the target window you want to resize
+4. Select resize mode and click "应用设置"
+---
+1. 运行 `WindowResizer-imgui.exe`
+2. 点击"开始查找窗口"按钮
+3. 点击要调整的目标窗口
+4. 选择调整模式并点击"应用设置"
+
+---
+
 ## Notice / 注意！
 
 1. **Windows that cannot be resized**：Try enabling "Run as Administrator" in settings to gain sufficient permissions to resize system-level windows.
@@ -55,8 +69,8 @@ A tool to quickly resize any window with a beautiful ImGui-based interface.
      2. 删除配置文件目录 `%APPDATA%\WindowResizer-imgui`
    - **使用批处理工具**：运行项目根目录下的 `uninstall.bat` 脚本，按照提示选择删除选项
 
----
 
+---
 
 ## Build / 编译
 
@@ -68,6 +82,8 @@ A tool to quickly resize any window with a beautiful ImGui-based interface.
 - ImGui Docking Branch
 - LXGWWenKaiLite font for Chinese support
 
+---
+
 ### Build Steps / 编译步骤
 
 1. Open `WindowResizer-imgui.sln` in Visual Studio
@@ -78,18 +94,7 @@ A tool to quickly resize any window with a beautiful ImGui-based interface.
 2. 选择 `Release | x64` 配置
 3. 生成解决方案
 
-## Usage / 使用方法
-
-1. Run `WindowResizer-imgui.exe`
-2. Click "开始查找窗口" button
-3. Click on the target window you want to resize
-4. Select resize mode and click "应用设置"
 ---
-1. 运行 `WindowResizer-imgui.exe`
-2. 点击"开始查找窗口"按钮
-3. 点击要调整的目标窗口
-4. 选择调整模式并点击"应用设置"
-
 
 
 ## License / 许可证
@@ -104,6 +109,8 @@ Modified by siuzhiyu 2026
 See the [LICENSE](LICENSE) file for details.
 
 详见 [LICENSE](LICENSE) 文件。
+
+---
 
 ## Credits / 致谢
 
