@@ -279,13 +279,20 @@ void RenderAboutPopup()
 
     ImGui::TextColored(ImVec4(0.8f, 0.5f, 0.2f, 1.0f), LANG("original_project"));
     ImGui::BulletText(LANG("original_author"));
+    ImGui::Text("GitHub: ");
+    ImGui::SameLine();
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 1.0f, 1.0f));
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.1f, 0.1f, 0.5f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.1f, 0.5f));
-    if (ImGui::Button("GitHub: https://github.com/inkuang/WindowResizer", ImVec2(380, 0)))
-        ShellExecuteA(NULL, "open", "https://github.com/inkuang/WindowResizer", NULL, NULL, SW_SHOWNORMAL);
-    ImGui::PopStyleColor(4);
+    ImGui::Text("https://github.com/inkuang/WindowResizer");
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+        if (ImGui::IsItemClicked())
+        {
+            // 使用 ShellExecuteW 直接打开链接
+            ShellExecuteW(NULL, L"open", L"https://github.com/inkuang/WindowResizer", NULL, NULL, SW_SHOWNORMAL);
+        }
+    }
+    ImGui::PopStyleColor();
 
     ImGui::Spacing();
     ImGui::TextColored(ImVec4(0.4f, 0.7f, 0.3f, 1.0f), LANG("imgui_version_info"));
@@ -293,13 +300,20 @@ void RenderAboutPopup()
     ImGui::BulletText(LANG("imgui_same_features"));
     ImGui::Spacing();
     ImGui::BulletText(LANG("imgui_author"));
+    ImGui::Text("GitHub: ");
+    ImGui::SameLine();
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 1.0f, 1.0f));
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.1f, 0.1f, 0.5f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.1f, 0.5f));
-    if (ImGui::Button("GitHub: https://github.com/siuzhiyu/WindowResizer", ImVec2(380, 0)))
-        ShellExecuteA(NULL, "open", "https://github.com/siuzhiyu/WindowResizer", NULL, NULL, SW_SHOWNORMAL);
-    ImGui::PopStyleColor(4);
+    ImGui::Text("https://github.com/siuzhiyu/WindowResizer");
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+        if (ImGui::IsItemClicked())
+        {
+            // 使用 ShellExecuteW 直接打开链接
+            ShellExecuteW(NULL, L"open", L"https://github.com/siuzhiyu/WindowResizer", NULL, NULL, SW_SHOWNORMAL);
+        }
+    }
+    ImGui::PopStyleColor();
 
     ImGui::Separator();
     if (ImGui::Button(LANG("close"), ImVec2(120, 0))) { g_appState.bShowAbout = false; ImGui::CloseCurrentPopup(); }
