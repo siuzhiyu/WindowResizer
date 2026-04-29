@@ -44,24 +44,39 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     CommandLineOptions cmdOptions = CmdParser::Parse(argc, argv);
 
+    bool hasConsole = false;
     if (cmdOptions.help || cmdOptions.isValid)
     {
-        AttachConsole(ATTACH_PARENT_PROCESS);
+        // 尝试附加到父控制台
+        if (!AttachConsole(ATTACH_PARENT_PROCESS))
+        {
+            // 如果没有父控制台，创建新控制台
+            AllocConsole();
+        }
+        hasConsole = true;
     }
 
     if (cmdOptions.help)
     {
         CmdParser::PrintUsage();
         LocalFree(argv);
+        if (hasConsole)
+        {
+            Sleep(50); // 短暂等待确保输出完成
+            FreeConsole();
+        }
         return 0;
-        
     }
 
     if (cmdOptions.isValid)
     {
         bool success = CommandExecutor::Execute(cmdOptions);
         LocalFree(argv);
-        FreeConsole();
+        if (hasConsole)
+        {
+            Sleep(50); // 短暂等待确保输出完成
+            FreeConsole();
+        }
         return success ? 0 : 1;
     }
 

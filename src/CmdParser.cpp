@@ -215,11 +215,11 @@ bool CmdParser::IsResolutionPreset(const std::wstring& preset, int& width, int& 
 static void WriteToConsole(const wchar_t* text)
 {
     HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hStdout == INVALID_HANDLE_VALUE)
-        return;
-
-    DWORD written;
-    WriteConsoleW(hStdout, text, (DWORD)wcslen(text), &written, NULL);
+    if (hStdout != INVALID_HANDLE_VALUE)
+    {
+        DWORD written;
+        WriteConsoleW(hStdout, text, (DWORD)wcslen(text), &written, NULL);
+    }
 }
 
 void CmdParser::PrintUsage()
