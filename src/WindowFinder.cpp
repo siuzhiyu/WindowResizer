@@ -27,44 +27,6 @@ HWND WindowFinder::FindWindowByTitle(const std::wstring& title, bool partialMatc
     return data.foundWindow;
 }
 
-std::vector<HWND> WindowFinder::FindAllWindowsByTitle(const std::wstring& title)
-{
-    std::vector<HWND> windows;
-    if (title.empty())
-        return windows;
-
-    FindWindowData data;
-    data.targetTitle = title;
-    data.partialMatch = true;
-    data.foundWindow = nullptr;
-
-    EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL {
-        auto& windows = *reinterpret_cast<std::vector<HWND>*>(lParam);
-        FindWindowData* data = reinterpret_cast<FindWindowData*>(lParam);
-        
-        if (!IsWindowVisible(hwnd))
-            return TRUE;
-
-        wchar_t windowTitle[256];
-        GetWindowTextW(hwnd, windowTitle, sizeof(windowTitle) / sizeof(wchar_t));
-
-        std::wstring title(windowTitle);
-        std::wstring target = data->targetTitle;
-
-        std::transform(title.begin(), title.end(), title.begin(), ::towlower);
-        std::transform(target.begin(), target.end(), target.begin(), ::towlower);
-
-        if (title.find(target) != std::wstring::npos)
-        {
-            windows.push_back(hwnd);
-        }
-
-        return TRUE;
-    }, reinterpret_cast<LPARAM>(&windows));
-
-    return windows;
-}
-
 BOOL CALLBACK WindowFinder::EnumWindowsProc(HWND hwnd, LPARAM lParam)
 {
     FindWindowData* data = reinterpret_cast<FindWindowData*>(lParam);

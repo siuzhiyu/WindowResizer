@@ -143,14 +143,7 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
         if (arg[0] == L'-')
         {
             std::wstring preset = arg.substr(1);
-            if (IsResolutionPreset(preset, options.width, options.height))
-            {
-                continue;
-            }
-            else if (ParseFeatureFlag(arg, options))
-            {
-                continue;
-            }
+            IsResolutionPreset(preset, options.width, options.height);
         }
         else
         {
@@ -219,31 +212,6 @@ bool CmdParser::IsResolutionPreset(const std::wstring& preset, int& width, int& 
     return false;
 }
 
-bool CmdParser::ParseFeatureFlag(const std::wstring& arg, CommandLineOptions& options)
-{
-    if (arg == L"-center")
-    {
-        options.centerWindow = true;
-        return true;
-    }
-    if (arg == L"-hidetitle" || arg == L"-notitle")
-    {
-        options.hideTitleBar = true;
-        return true;
-    }
-    if (arg == L"-maximize" || arg == L"-max")
-    {
-        options.maximize = true;
-        return true;
-    }
-    if (arg == L"-restore")
-    {
-        options.restore = true;
-        return true;
-    }
-    return false;
-}
-
 static void WriteToConsole(const wchar_t* text)
 {
     HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -268,8 +236,8 @@ void CmdParser::PrintUsage()
     WriteToConsole(L"                         应用场景:批处理脚本、开机自动调整已运行窗口\n");
     WriteToConsole(L"  -t, --title [窗口标题]   指定目标窗口标题（与直接写标题功能相同）\n\n");
     WriteToConsole(L"等待窗口选项:\n");
-    WriteToConsole(L"  -wait, -w [毫秒]        等待窗口出现的超时时间（默认200ms）\n");
-    WriteToConsole(L"  -nowait                 不等待窗口出现\n\n");
+    WriteToConsole(L"  -wait, -w [毫秒]        等待窗口出现的超时时间（默认3000ms）\n");
+    WriteToConsole(L"  -nowait                 无限等待窗口出现（按 Ctrl+C 取消）\n\n");
     WriteToConsole(L"分辨率选项:\n");
     WriteToConsole(L"  -size [宽] [高]         设置窗口尺寸，如 -size 1920 1080\n");
     WriteToConsole(L"  -scale [百分比]         按比例缩放窗口，如 -scale 120（放大到120%）\n\n");

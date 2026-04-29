@@ -18,7 +18,7 @@ struct CommandLineOptions
     bool maximize = false;
     bool restore = false;
     bool waitForWindow = true;
-    int waitTimeout = 200;
+    int waitTimeout = 3000;
     bool help = false;
     bool isValid = false;
 };
@@ -31,6 +31,5 @@ public:
     
 private:
     static bool ParseResolution(const std::wstring& arg, int& width, int& height);
-    static bool ParseFeatureFlag(const std::wstring& arg, CommandLineOptions& options);
     static bool IsResolutionPreset(const std::wstring& preset, int& width, int& height);
 };

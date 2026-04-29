@@ -19,19 +19,35 @@ bool CommandExecutor::Execute(const CommandLineOptions& options)
 
     if (!options.targetExePath.empty())
     {
-        targetWindow = LaunchAndWaitForWindow(options.targetExePath, options.waitTimeout);
-        if (!targetWindow)
+        if (options.waitForWindow)
         {
-            std::wcerr << L"错误：启动程序后未找到窗口\n";
-            return false;
+            std::wcout << L"正在启动程序并等待窗口... 超时: " << options.waitTimeout << L"ms\n";
+            targetWindow = LaunchAndWaitForWindow(options.targetExePath, options.waitTimeout);
+            if (!targetWindow)
+            {
+                std::wcerr << L"错误：启动程序后未找到窗口\n";
+                return false;
+            }
+        }
+        else
+        {
+            std::wcout << L"正在启动程序并无限等待窗口... (-nowait 模式)\n";
+            targetWindow = LaunchAndWaitForWindow(options.targetExePath, -1);
+            if (!targetWindow)
+            {
+                std::wcerr << L"错误：启动程序后未找到窗口\n";
+                return false;
+            }
         }
     }
     else if (!options.targetProcessName.empty())
     {
+        std::wcout << L"正在通过进程名查找窗口: " << options.targetProcessName << L"\n";
         targetWindow = WindowFinder::FindWindowByProcessName(options.targetProcessName);
     }
     else if (!options.targetWindowTitle.empty())
     {
+        std::wcout << L"正在通过窗口标题查找: " << options.targetWindowTitle << L"\n";
         targetWindow = WindowFinder::FindWindowByTitle(options.targetWindowTitle);
     }
 
@@ -40,9 +56,12 @@ bool CommandExecutor::Execute(const CommandLineOptions& options)
         std::wcerr << L"错误：未找到目标窗口\n";
         return false;
     }
+    
+    std::wcout << L"找到目标窗口\n";
 
     if (options.width > 0 && options.height > 0)
     {
+        std::wcout << L"设置窗口大小: " << options.width << L"x" << options.height << L"\n";
         SetWindowSize(targetWindow, options.width, options.height);
     }
 
@@ -54,29 +73,35 @@ bool CommandExecutor::Execute(const CommandLineOptions& options)
         int currentHeight = rect.bottom - rect.top;
         int newWidth = (int)(currentWidth * options.scale);
         int newHeight = (int)(currentHeight * options.scale);
+        std::wcout << L"缩放窗口: " << currentWidth << L"x" << currentHeight << L" -> " << newWidth << L"x" << newHeight << L"\n";
         SetWindowSize(targetWindow, newWidth, newHeight);
     }
 
     if (options.centerWindow)
     {
+        std::wcout << L"居中窗口\n";
         CenterWindow(targetWindow);
     }
 
     if (options.hideTitleBar)
     {
+        std::wcout << L"隐藏标题栏\n";
         ToggleTitleBar(targetWindow, true);
     }
 
     if (options.showTitleBar)
     {
+        std::wcout << L"显示标题栏\n";
         ToggleTitleBar(targetWindow, false);
     }
 
     if (options.maximize)
     {
+        std::wcout << L"最大化窗口\n";
         MaximizeWindow(targetWindow);
     }
 
+    std::wcout << L"操作完成\n";
     return true;
 }
 
@@ -130,8 +155,10 @@ HWND CommandExecutor::FindWindowForProcess(DWORD processId, int timeoutMs)
     data.found = false;
 
     DWORD startTime = GetTickCount();
+    int attempts = 0;
+    bool infiniteWait = (timeoutMs < 0);
 
-    while (!data.found && (GetTickCount() - startTime < (DWORD)timeoutMs))
+    while (!data.found && (infiniteWait || (GetTickCount() - startTime < (DWORD)timeoutMs)))
     {
         data.foundWindow = nullptr;
         EnumWindows(EnumWindowsForProcess, reinterpret_cast<LPARAM>(&data));
@@ -139,6 +166,18 @@ HWND CommandExecutor::FindWindowForProcess(DWORD processId, int timeoutMs)
         if (data.found)
             break;
 
+        attempts++;
+        if (attempts % 5 == 0)
+        {
+            if (infiniteWait)
+            {
+                std::wcout << L"正在等待窗口... (尝试 " << attempts << L", 按 Ctrl+C 取消)\n";
+            }
+            else
+            {
+                std::wcout << L"正在等待窗口... (尝试 " << attempts << L")\n";
+            }
+        }
         Sleep(100);
     }
 
