@@ -80,12 +80,6 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
             continue;
         }
 
-        if (arg == L"-restore")
-        {
-            options.restore = true;
-            continue;
-        }
-
         if (arg == L"-nowait")
         {
             options.waitForWindow = false;
@@ -162,6 +156,14 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
 
         if (arg[0] == L'-')
         {
+            if (g_cmdLang == Language::Chinese)
+            {
+                WriteToConsole((L"未知选项: " + arg + L"\n").c_str());
+            }
+            else
+            {
+                WriteToConsole(("Unknown option: " + arg + "\n").c_str());
+            }
         }
         else
         {

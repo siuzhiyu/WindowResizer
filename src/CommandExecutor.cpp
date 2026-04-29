@@ -5,6 +5,15 @@
 #include <process.h>
 #include <cstdio>
 #include <sstream>
+#include <vector>
+
+namespace
+{
+    const int DEFAULT_WAIT_TIMEOUT_MS = 3000;
+    const int WINDOW_POLL_INTERVAL_MS = 100;
+    const int LOG_ATTEMPT_INTERVAL = 5;
+    const int WINDOW_TITLE_BUFFER_SIZE = 256;
+}
 
 // 辅助函数：使用WriteConsoleW输出（避免编码问题）
 static void WriteOut(const std::wstring& text)
@@ -152,6 +161,8 @@ HWND CommandExecutor::LaunchAndWaitForWindow(const std::wstring& exePath, int ti
     si.wShowWindow = SW_SHOWNORMAL;
 
     std::wstring cmdLine = L"\"" + exePath + L"\"";
+    std::vector<wchar_t> cmdLineBuffer(cmdLine.begin(), cmdLine.end());
+    cmdLineBuffer.push_back(L'\0');
 
     std::wstring workDir;
     size_t lastSlash = exePath.find_last_of(L'\\');
@@ -160,9 +171,9 @@ HWND CommandExecutor::LaunchAndWaitForWindow(const std::wstring& exePath, int ti
         workDir = exePath.substr(0, lastSlash);
     }
 
-    if (!CreateProcessW(
+    BOOL success = CreateProcessW(
         exePath.empty() ? NULL : exePath.c_str(),
-        &cmdLine[0],
+        cmdLineBuffer.data(),
         NULL,
         NULL,
         FALSE,
@@ -170,7 +181,8 @@ HWND CommandExecutor::LaunchAndWaitForWindow(const std::wstring& exePath, int ti
         NULL,
         workDir.empty() ? NULL : workDir.c_str(),
         &si,
-        &pi))
+        &pi);
+    if (!success)
     {
         std::wstring zh = L"错误：无法启动程序 " + exePath;
         std::wstring en = L"Error: failed to launch " + exePath;
@@ -207,7 +219,7 @@ HWND CommandExecutor::FindWindowForProcess(DWORD processId, int timeoutMs)
             break;
 
         attempts++;
-        if (attempts % 5 == 0)
+        if (attempts % LOG_ATTEMPT_INTERVAL == 0)
         {
             if (infiniteWait)
             {
@@ -222,7 +234,7 @@ HWND CommandExecutor::FindWindowForProcess(DWORD processId, int timeoutMs)
                 WCOUT(zh, en);
             }
         }
-        Sleep(100);
+        Sleep(WINDOW_POLL_INTERVAL_MS);
     }
 
     return data.foundWindow;

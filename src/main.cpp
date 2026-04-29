@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         LocalFree(argv);
         if (hasConsole)
         {
-            Sleep(50); // 短暂等待确保输出完成
+            Sleep(CONSOLE_FLUSH_DELAY_MS); // 短暂等待确保输出完成
             FreeConsole();
         }
         return 0;
@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         LocalFree(argv);
         if (hasConsole)
         {
-            Sleep(50); // 短暂等待确保输出完成
+            Sleep(CONSOLE_FLUSH_DELAY_MS); // 短暂等待确保输出完成
             FreeConsole();
         }
         return success ? 0 : 1;

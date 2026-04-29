@@ -5,6 +5,11 @@
 
 #pragma comment(lib, "psapi.lib")
 
+namespace
+{
+    const int WINDOW_TITLE_BUFFER_SIZE = 256;
+}
+
 struct FindWindowData
 {
     std::wstring targetTitle;
@@ -38,7 +43,7 @@ BOOL CALLBACK WindowFinder::EnumWindowsProc(HWND hwnd, LPARAM lParam)
     if (!(style & WS_OVERLAPPEDWINDOW) && !(style & WS_POPUP))
         return TRUE;
 
-    wchar_t windowTitle[256];
+    wchar_t windowTitle[WINDOW_TITLE_BUFFER_SIZE];
     GetWindowTextW(hwnd, windowTitle, sizeof(windowTitle) / sizeof(wchar_t));
 
     std::wstring title(windowTitle);

@@ -14,6 +14,8 @@ enum class Language
 // 全局语言设置
 extern Language g_cmdLang;
 
+const int CONSOLE_FLUSH_DELAY_MS = 50;
+
 struct CommandLineOptions
 {
     std::wstring targetExePath;
@@ -26,7 +28,6 @@ struct CommandLineOptions
     bool hideTitleBar = false;
     bool showTitleBar = false;
     bool maximize = false;
-    bool restore = false;
     bool waitForWindow = true;
     int waitTimeout = 3000;
     bool help = false;
