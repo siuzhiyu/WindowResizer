@@ -1,5 +1,6 @@
 #include "CommandExecutor.h"
 #include "WindowFinder.h"
+#include "CmdParser.h"
 #include <iostream>
 #include <process.h>
 #include <cstdio>
@@ -26,9 +27,9 @@ static void WriteErr(const std::wstring& text)
     }
 }
 
-// 辅助宏：输出
-#define WCOUT(x) { std::wstringstream ss; ss << x << std::endl; WriteOut(ss.str()); }
-#define WCERR(x) { std::wstringstream ss; ss << x << std::endl; WriteErr(ss.str()); }
+// 辅助宏：输出双语
+#define WCOUT(zh, en) { std::wstringstream ss; if (g_cmdLang == Language::Chinese) ss << zh << std::endl; else ss << en << std::endl; WriteOut(ss.str()); }
+#define WCERR(zh, en) { std::wstringstream ss; if (g_cmdLang == Language::Chinese) ss << zh << std::endl; else ss << en << std::endl; WriteErr(ss.str()); }
 
 struct WaitForWindowData
 {
@@ -48,47 +49,55 @@ bool CommandExecutor::Execute(const CommandLineOptions& options)
     {
         if (options.waitForWindow)
         {
-            WCOUT(L"正在启动程序并等待窗口... 超时: " << options.waitTimeout << L"ms");
+            std::wstring zh = L"正在启动程序并等待窗口... 超时: " + std::to_wstring(options.waitTimeout) + L"ms";
+            std::wstring en = L"Launching program and waiting for window... timeout: " + std::to_wstring(options.waitTimeout) + L"ms";
+            WCOUT(zh, en);
             targetWindow = LaunchAndWaitForWindow(options.targetExePath, options.waitTimeout);
             if (!targetWindow)
             {
-                WCERR(L"错误：启动程序后未找到窗口");
+                WCERR(L"错误：启动程序后未找到窗口", L"Error: window not found after launch");
                 return false;
             }
         }
         else
         {
-            WCOUT(L"正在启动程序并无限等待窗口... (-nowait 模式)");
+            WCOUT(L"正在启动程序并无限等待窗口... (-nowait 模式)", L"Launching program and infinite waiting... (-nowait mode)");
             targetWindow = LaunchAndWaitForWindow(options.targetExePath, -1);
             if (!targetWindow)
             {
-                WCERR(L"错误：启动程序后未找到窗口");
+                WCERR(L"错误：启动程序后未找到窗口", L"Error: window not found after launch");
                 return false;
             }
         }
     }
     else if (!options.targetProcessName.empty())
     {
-        WCOUT(L"正在通过进程名查找窗口: " << options.targetProcessName);
+        std::wstring zh = L"正在通过进程名查找窗口: " + options.targetProcessName;
+        std::wstring en = L"Finding window by process name: " + options.targetProcessName;
+        WCOUT(zh, en);
         targetWindow = WindowFinder::FindWindowByProcessName(options.targetProcessName);
     }
     else if (!options.targetWindowTitle.empty())
     {
-        WCOUT(L"正在通过窗口标题查找: " << options.targetWindowTitle);
+        std::wstring zh = L"正在通过窗口标题查找: " + options.targetWindowTitle;
+        std::wstring en = L"Finding window by title: " + options.targetWindowTitle;
+        WCOUT(zh, en);
         targetWindow = WindowFinder::FindWindowByTitle(options.targetWindowTitle);
     }
 
     if (!targetWindow || !IsWindowValid(targetWindow))
     {
-        WCERR(L"错误：未找到目标窗口");
+        WCERR(L"错误：未找到目标窗口", L"Error: target window not found");
         return false;
     }
     
-    WCOUT(L"找到目标窗口");
+    WCOUT(L"找到目标窗口", L"Target window found");
 
     if (options.width > 0 && options.height > 0)
     {
-        WCOUT(L"设置窗口大小: " << options.width << L"x" << options.height);
+        std::wstring zh = L"设置窗口大小: " + std::to_wstring(options.width) + L"x" + std::to_wstring(options.height);
+        std::wstring en = L"Setting window size: " + std::to_wstring(options.width) + L"x" + std::to_wstring(options.height);
+        WCOUT(zh, en);
         SetWindowSize(targetWindow, options.width, options.height);
     }
 
@@ -100,35 +109,37 @@ bool CommandExecutor::Execute(const CommandLineOptions& options)
         int currentHeight = rect.bottom - rect.top;
         int newWidth = (int)(currentWidth * options.scale);
         int newHeight = (int)(currentHeight * options.scale);
-        WCOUT(L"缩放窗口: " << currentWidth << L"x" << currentHeight << L" -> " << newWidth << L"x" << newHeight);
+        std::wstring zh = L"缩放窗口: " + std::to_wstring(currentWidth) + L"x" + std::to_wstring(currentHeight) + L" -> " + std::to_wstring(newWidth) + L"x" + std::to_wstring(newHeight);
+        std::wstring en = L"Scaling window: " + std::to_wstring(currentWidth) + L"x" + std::to_wstring(currentHeight) + L" -> " + std::to_wstring(newWidth) + L"x" + std::to_wstring(newHeight);
+        WCOUT(zh, en);
         SetWindowSize(targetWindow, newWidth, newHeight);
     }
 
     if (options.centerWindow)
     {
-        WCOUT(L"居中窗口");
+        WCOUT(L"居中窗口", L"Centering window");
         CenterWindow(targetWindow);
     }
 
     if (options.hideTitleBar)
     {
-        WCOUT(L"隐藏标题栏");
+        WCOUT(L"隐藏标题栏", L"Hiding title bar");
         ToggleTitleBar(targetWindow, true);
     }
 
     if (options.showTitleBar)
     {
-        WCOUT(L"显示标题栏");
+        WCOUT(L"显示标题栏", L"Showing title bar");
         ToggleTitleBar(targetWindow, false);
     }
 
     if (options.maximize)
     {
-        WCOUT(L"最大化窗口");
+        WCOUT(L"最大化窗口", L"Maximizing window");
         MaximizeWindow(targetWindow);
     }
 
-    WCOUT(L"操作完成");
+    WCOUT(L"操作完成", L"Operation completed");
     return true;
 }
 
@@ -161,7 +172,9 @@ HWND CommandExecutor::LaunchAndWaitForWindow(const std::wstring& exePath, int ti
         &si,
         &pi))
     {
-        WCERR(L"错误：无法启动程序 " << exePath);
+        std::wstring zh = L"错误：无法启动程序 " + exePath;
+        std::wstring en = L"Error: failed to launch " + exePath;
+        WCERR(zh, en);
         return nullptr;
     }
 
@@ -198,11 +211,15 @@ HWND CommandExecutor::FindWindowForProcess(DWORD processId, int timeoutMs)
         {
             if (infiniteWait)
             {
-                WCOUT(L"正在等待窗口... (尝试 " << attempts << L", 按 Ctrl+C 取消)");
+                std::wstring zh = L"正在等待窗口... (尝试 " + std::to_wstring(attempts) + L", 按 Ctrl+C 取消)";
+                std::wstring en = L"Waiting for window... (attempt " + std::to_wstring(attempts) + L", Ctrl+C to cancel)";
+                WCOUT(zh, en);
             }
             else
             {
-                WCOUT(L"正在等待窗口... (尝试 " << attempts << L")");
+                std::wstring zh = L"正在等待窗口... (尝试 " + std::to_wstring(attempts) + L")";
+                std::wstring en = L"Waiting for window... (attempt " + std::to_wstring(attempts) + L")";
+                WCOUT(zh, en);
             }
         }
         Sleep(100);
@@ -299,12 +316,4 @@ void CommandExecutor::MaximizeWindow(HWND hwnd)
     {
         ShowWindow(hwnd, SW_SHOWMAXIMIZED);
     }
-}
-
-void CommandExecutor::RestoreWindow(HWND hwnd)
-{
-    if (!IsWindowValid(hwnd))
-        return;
-
-    ShowWindow(hwnd, SW_RESTORE);
 }

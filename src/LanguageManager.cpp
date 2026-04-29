@@ -96,6 +96,8 @@ void LanguageManager::LoadChinese()
     m_strings["help_logic_2"] = "当前分辨率: 基于初始分辨率，随调整操作实时更新";
     m_strings["help_logic_3"] = "比例缩放: 以当前分辨率为基准进行比例计算";
     m_strings["help_logic_4"] = "还原操作: 始终恢复到初始分辨率";
+    m_strings["help_cmd_title"] = "CMD命令行支持";
+    m_strings["help_cmd_desc"] = "支持通过CMD或批处理直接启动目标程序并应用分辨率调整。\n详细参数说明请运行 WindowResizer-imgui.exe --help 获取。";
     m_strings["language"] = "语言";
 }
 
@@ -158,6 +160,8 @@ void LanguageManager::LoadEnglish()
     m_strings["help_logic_2"] = "Current Resolution: Based on initial resolution, updated in real-time";
     m_strings["help_logic_3"] = "Scale Resize: Calculated based on current resolution";
     m_strings["help_logic_4"] = "Restore: Always restores to initial resolution";
+    m_strings["help_cmd_title"] = "CMD Command Line Support";
+    m_strings["help_cmd_desc"] = "Supports launching target programs directly via CMD or batch files and applying resolution adjustments.\nFor detailed parameter info, run WindowResizer-imgui.exe --help.";
     m_strings["language"] = "Language";
     m_strings["ui_scale"] = "UI Scale";
     m_strings["ui_scale_desc"] = "Adjust UI element size";

@@ -4,6 +4,16 @@
 #include <string>
 #include <vector>
 
+// 语言枚举
+enum class Language
+{
+    English,
+    Chinese
+};
+
+// 全局语言设置
+extern Language g_cmdLang;
+
 struct CommandLineOptions
 {
     std::wstring targetExePath;
@@ -31,5 +41,5 @@ public:
     
 private:
     static bool ParseResolution(const std::wstring& arg, int& width, int& height);
-    static bool IsResolutionPreset(const std::wstring& preset, int& width, int& height);
+    static void DetectLanguage();
 };

@@ -12,7 +12,6 @@ public:
     static void CenterWindow(HWND hwnd);
     static void ToggleTitleBar(HWND hwnd, bool hide);
     static void MaximizeWindow(HWND hwnd);
-    static void RestoreWindow(HWND hwnd);
 
 private:
     static bool IsWindowValid(HWND hwnd);

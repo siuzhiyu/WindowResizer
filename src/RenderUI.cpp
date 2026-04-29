@@ -126,7 +126,7 @@ void RenderUI()
 
     // 标题文字往右挪一点，增加左边距
     ImGui::SetCursorPosX(16);
-    ImGui::Text("Window Resizer-imgui v1.1");
+    ImGui::Text("Window Resizer-imgui v1.2");
 
     float button_width = 24;
     float button_spacing = 8; // 按钮之间的间距
@@ -363,6 +363,11 @@ void RenderHelpPopup()
     ImGui::BulletText(LANG("help_logic_2"));
     ImGui::BulletText(LANG("help_logic_3"));
     ImGui::BulletText(LANG("help_logic_4"));
+    ImGui::Spacing();
+
+    ImGui::TextColored(ImVec4(0.2f, 0.6f, 1.0f, 1.0f), LANG("help_cmd_title"));
+    ImGui::Separator();
+    ImGui::TextWrapped(LANG("help_cmd_desc"));
     ImGui::Separator();
 
     if (ImGui::Button(LANG("close"), ImVec2(120, 0))) { g_appState.bShowHelp = false; ImGui::CloseCurrentPopup(); }

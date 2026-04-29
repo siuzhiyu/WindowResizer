@@ -4,7 +4,7 @@
 #include <string>
 
 #define SOFTWARE_NAME "WindowResizer-imgui"
-#define CURRENT_VERSION 110
+#define CURRENT_VERSION 120
 #define APP_DATA_DIR SOFTWARE_NAME
 
 struct AppState

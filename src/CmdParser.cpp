@@ -5,6 +5,23 @@
 #include <algorithm>
 #include <windows.h>
 
+// 全局语言变量
+Language g_cmdLang = Language::English;
+
+// 检测系统语言
+void CmdParser::DetectLanguage()
+{
+    LANGID langId = GetUserDefaultUILanguage();
+    if (PRIMARYLANGID(langId) == LANG_CHINESE)
+    {
+        g_cmdLang = Language::Chinese;
+    }
+    else
+    {
+        g_cmdLang = Language::English;
+    }
+}
+
 static bool IsExePath(const std::wstring& path)
 {
     if (path.empty()) return false;
@@ -17,6 +34,9 @@ static bool IsExePath(const std::wstring& path)
 
 CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
 {
+    // 检测语言
+    DetectLanguage();
+    
     CommandLineOptions options;
     options.isValid = false;
 
@@ -142,8 +162,6 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
 
         if (arg[0] == L'-')
         {
-            std::wstring preset = arg.substr(1);
-            IsResolutionPreset(preset, options.width, options.height);
         }
         else
         {
@@ -187,28 +205,6 @@ bool CmdParser::ParseResolution(const std::wstring& arg, int& width, int& height
         }
     }
     
-    return IsResolutionPreset(arg, width, height);
-}
-
-bool CmdParser::IsResolutionPreset(const std::wstring& preset, int& width, int& height)
-{
-    for (int i = 0; i < g_arrResolutionsCount; ++i)
-    {
-        const ResolutionPreset& res = g_arrResolutions[i];
-        std::wstring name(res.name, res.name + strlen(res.name));
-        std::transform(name.begin(), name.end(), name.begin(), ::towlower);
-        
-        std::wstring presetLower = preset;
-        std::transform(presetLower.begin(), presetLower.end(), presetLower.begin(), ::towlower);
-        
-        if (presetLower == name || preset == std::to_wstring(res.width) + L"x" + std::to_wstring(res.height))
-        {
-            width = res.width;
-            height = res.height;
-            return true;
-        }
-    }
-    
     return false;
 }
 
@@ -224,34 +220,66 @@ static void WriteToConsole(const wchar_t* text)
 
 void CmdParser::PrintUsage()
 {
-    WriteToConsole(L"WindowResizer-imgui.exe [选项]\n\n");
-    WriteToConsole(L"命令行模式用法:\n");
-    WriteToConsole(L"  WindowResizer-imgui.exe [目标程序路径] [-分辨率] [-功能选项]\n");
-    WriteToConsole(L"  WindowResizer-imgui.exe [窗口标题] [-分辨率] [-功能选项]\n");
-    WriteToConsole(L"  WindowResizer-imgui.exe -p [进程名] [-分辨率] [-功能选项]\n\n");
-    WriteToConsole(L"参数说明:\n");
-    WriteToConsole(L"  [目标程序路径]          直接启动程序并调整其窗口\n");
-    WriteToConsole(L"  [窗口标题]              指定要调整的已运行窗口标题（可以是部分标题）\n");
-    WriteToConsole(L"  -p, --process [进程名]   指定目标进程名（如 notepad.exe）\n");
-    WriteToConsole(L"                         应用场景:批处理脚本、开机自动调整已运行窗口\n");
-    WriteToConsole(L"  -t, --title [窗口标题]   指定目标窗口标题（与直接写标题功能相同）\n\n");
-    WriteToConsole(L"等待窗口选项:\n");
-    WriteToConsole(L"  -wait, -w [毫秒]        等待窗口出现的超时时间（默认3000ms）\n");
-    WriteToConsole(L"  -nowait                 无限等待窗口出现（按 Ctrl+C 取消）\n\n");
-    WriteToConsole(L"分辨率选项:\n");
-    WriteToConsole(L"  -size [宽] [高]         设置窗口尺寸，如 -size 1920 1080\n");
-    WriteToConsole(L"  -scale [百分比]         按比例缩放窗口，如 -scale 120（放大到120%）\n\n");
-    WriteToConsole(L"功能选项:\n");
-    WriteToConsole(L"  -center, -c            将窗口居中显示\n");
-    WriteToConsole(L"  -hidetitle, -notitle, -ht  隐藏窗口标题栏\n");
-    WriteToConsole(L"  -showtitle, -st        显示窗口标题栏\n");
-    WriteToConsole(L"  -maximize, -max, -m    最大化窗口\n");
-    WriteToConsole(L"  -h, --help             显示此帮助信息\n\n");
-    WriteToConsole(L"示例:\n");
-    WriteToConsole(L"  WindowResizer-imgui.exe \"G:\\Game\\WinKawaks.exe\" -size 800 500 -c -ht\n");
-    WriteToConsole(L"  WindowResizer-imgui.exe \"记事本\" -size 1920 1080 -st\n");
-    WriteToConsole(L"  WindowResizer-imgui.exe -p notepad.exe -scale 150\n");
-    WriteToConsole(L"  WindowResizer-imgui.exe \"Google Chrome\" -scale 120 -c\n");
-    WriteToConsole(L"\n");
-    
+    if (g_cmdLang == Language::Chinese)
+    {
+        WriteToConsole(L"WindowResizer-imgui.exe [选项]\n\n");
+        WriteToConsole(L"命令行模式用法:\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe [目标程序路径] [-分辨率] [-功能选项]\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe [窗口标题] [-分辨率] [-功能选项]\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe -p [进程名] [-分辨率] [-功能选项]\n\n");
+        WriteToConsole(L"参数说明:\n");
+        WriteToConsole(L"  [目标程序路径]             直接启动程序并调整其窗口\n");
+        WriteToConsole(L"  [窗口标题]                  指定要调整的已运行窗口标题（可以是部分标题）\n");
+        WriteToConsole(L"  -p, --process [进程名]      指定目标进程名（如 notepad.exe）\n");
+        WriteToConsole(L"                               应用场景:批处理脚本、开机自动调整已运行窗口\n");
+        WriteToConsole(L"  -t, --title [窗口标题]      指定目标窗口标题（与直接写标题功能相同）\n\n");
+        WriteToConsole(L"等待窗口选项:\n");
+        WriteToConsole(L"  -wait, -w [毫秒]            等待窗口出现的超时时间（默认3000ms）\n");
+        WriteToConsole(L"  -nowait                     无限等待窗口出现（按 Ctrl+C 取消）\n\n");
+        WriteToConsole(L"分辨率选项:\n");
+        WriteToConsole(L"  -size [宽] [高]            设置窗口尺寸，如 -size 1920 1080\n");
+        WriteToConsole(L"  -scale [百分比]            按比例缩放窗口，如 -scale 120（放大到120%）\n\n");
+        WriteToConsole(L"功能选项:\n");
+        WriteToConsole(L"  -center, -c                将窗口居中显示\n");
+        WriteToConsole(L"  -hidetitle, -notitle, -ht  隐藏窗口标题栏\n");
+        WriteToConsole(L"  -showtitle, -st            显示窗口标题栏\n");
+        WriteToConsole(L"  -maximize, -max, -m        最大化窗口\n");
+        WriteToConsole(L"  -h, --help                 显示此帮助信息\n\n");
+        WriteToConsole(L"示例:\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe \"记事本\" -size 1920 1080 -st\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe -p notepad.exe -scale 150\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe \"Google Chrome\" -scale 120 -c\n");
+        WriteToConsole(L"\n");
+    }
+    else
+    {
+        WriteToConsole(L"WindowResizer-imgui.exe [options]\n\n");
+        WriteToConsole(L"Command line usage:\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe [target exe path] [-resolution] [-feature options]\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe [window title] [-resolution] [-feature options]\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe -p [process name] [-resolution] [-feature options]\n\n");
+        WriteToConsole(L"Parameters:\n");
+        WriteToConsole(L"  [target exe path]          Launch and resize the program window\n");
+        WriteToConsole(L"  [window title]             Target a running window by title (partial match)\n");
+        WriteToConsole(L"  -p, --process [name]       Target by process name (e.g. notepad.exe)\n");
+        WriteToConsole(L"                             Use case: batch scripts, auto-resize on startup\n");
+        WriteToConsole(L"  -t, --title [title]        Specify target window title\n\n");
+        WriteToConsole(L"Window wait options:\n");
+        WriteToConsole(L"  -wait, -w [ms]             Wait timeout for window (default 3000ms)\n");
+        WriteToConsole(L"  -nowait                    Infinite wait (Ctrl+C to cancel)\n\n");
+        WriteToConsole(L"Resolution options:\n");
+        WriteToConsole(L"  -size [w] [h]             Set window size, e.g. -size 1920 1080\n");
+        WriteToConsole(L"  -scale [percent]          Scale by percent, e.g. -scale 120 (zoom to 120%)\n\n");
+        WriteToConsole(L"Feature options:\n");
+        WriteToConsole(L"  -center, -c               Center window on screen\n");
+        WriteToConsole(L"  -hidetitle, -notitle, -ht Hide window title bar\n");
+        WriteToConsole(L"  -showtitle, -st           Show window title bar\n");
+        WriteToConsole(L"  -maximize, -max, -m       Maximize window\n");
+        WriteToConsole(L"  -h, --help                Show this help message\n\n");
+        WriteToConsole(L"Examples:\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe \"Notepad\" -size 1920 1080 -st\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe -p notepad.exe -scale 150\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe \"Google Chrome\" -scale 120 -c\n");
+        WriteToConsole(L"\n");
+    }
 }

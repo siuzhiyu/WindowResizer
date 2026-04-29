@@ -39,6 +39,16 @@ A tool to quickly resize any window with a beautiful ImGui-based interface.
 
 ---
 
+## CMD Command Line Support / CMD命令行支持
+
+- Supports launching target programs directly via CMD or batch files and applying resolution adjustments.
+- For detailed parameter info, run WindowResizer-imgui.exe --help.
+
+- 支持直接CMD命令行执行启动目标程序窗口并应用分辨率调整。
+- 详细参数信息请在CMD命令行执行 WindowResizer-imgui.exe --help 查阅。
+
+---
+
 ## Notice / 注意！
 
 1. **Windows that cannot be resized**：Try enabling "Run as Administrator" in settings to gain sufficient permissions to resize system-level windows.
