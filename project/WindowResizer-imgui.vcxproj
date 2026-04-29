@@ -164,6 +164,9 @@
     <ClCompile Include="..\src\Utils.cpp" />
     <ClCompile Include="..\src\WindowManager.cpp" />
     <ClCompile Include="..\src\FontConfig.cpp" />
+    <ClCompile Include="..\src\CmdParser.cpp" />
+    <ClCompile Include="..\src\WindowFinder.cpp" />
+    <ClCompile Include="..\src\CommandExecutor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\imgui\imconfig.h" />
@@ -181,6 +184,9 @@
     <ClInclude Include="..\src\Utils.h" />
     <ClInclude Include="..\src\WindowManager.h" />
     <ClInclude Include="..\src\FontConfig.h" />
+    <ClInclude Include="..\src\CmdParser.h" />
+    <ClInclude Include="..\src\WindowFinder.h" />
+    <ClInclude Include="..\src\CommandExecutor.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\res\resource.rc" />

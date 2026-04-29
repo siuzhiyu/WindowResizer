@@ -7,6 +7,8 @@
 #include "WindowManager.h"
 #include "LanguageManager.h"
 #include "FontConfig.h"
+#include "CmdParser.h"
+#include "CommandExecutor.h"
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
@@ -15,6 +17,7 @@
 #include <tchar.h>
 #include <cstdio>
 #include <windows.h>
+#include <shellapi.h>
 
 // 资源定义
 #define FONT_RESOURCE 102
@@ -36,6 +39,34 @@ bool RunAsAdmin()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+    int argc;
+    wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+    CommandLineOptions cmdOptions = CmdParser::Parse(argc, argv);
+
+    if (cmdOptions.help || cmdOptions.isValid)
+    {
+        AttachConsole(ATTACH_PARENT_PROCESS);
+    }
+
+    if (cmdOptions.help)
+    {
+        CmdParser::PrintUsage();
+        LocalFree(argv);
+        return 0;
+        
+    }
+
+    if (cmdOptions.isValid)
+    {
+        bool success = CommandExecutor::Execute(cmdOptions);
+        LocalFree(argv);
+        FreeConsole();
+        return success ? 0 : 1;
+    }
+
+    LocalFree(argv);
+
     LoadSettings();
     // 优先使用保存的语言，没有保存则检测系统语言
     if (!g_appState.strLanguage || strlen(g_appState.strLanguage) == 0)
