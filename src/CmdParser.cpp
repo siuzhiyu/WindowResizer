@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <windows.h>
 
+static void WriteToConsole(const wchar_t* text);
+
 // 全局语言变量
 Language g_cmdLang = Language::English;
 
@@ -162,7 +164,7 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
             }
             else
             {
-                WriteToConsole(("Unknown option: " + arg + "\n").c_str());
+                WriteToConsole((L"Unknown option: " + arg + L"\n").c_str());
             }
         }
         else

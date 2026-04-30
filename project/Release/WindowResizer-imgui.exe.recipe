@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\ WindowResizer\project\Release\WindowResizer-imgui.exe</FullPath>
+      <FullPath>d:\ WindowResizer\project\Release\WindowResizer-imgui.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
