@@ -1,5 +1,7 @@
 # Build outputs
 WindowResizer-ImGui/project/Release/
+project/build_release.bat
+build/
 
 # IDE files
 .vs/
