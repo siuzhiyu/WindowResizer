@@ -5,73 +5,6 @@
 
 #pragma comment(lib, "psapi.lib")
 
-namespace
-{
-    const int WINDOW_TITLE_BUFFER_SIZE = 256;
-}
-
-struct FindWindowData
-{
-    std::wstring targetTitle;
-    bool partialMatch;
-    HWND foundWindow;
-};
-
-HWND WindowFinder::FindWindowByTitle(const std::wstring& title, bool partialMatch)
-{
-    if (title.empty())
-        return nullptr;
-
-    FindWindowData data;
-    data.targetTitle = title;
-    data.partialMatch = partialMatch;
-    data.foundWindow = nullptr;
-
-    EnumWindows(EnumWindowsProc, reinterpret_cast<LPARAM>(&data));
-
-    return data.foundWindow;
-}
-
-BOOL CALLBACK WindowFinder::EnumWindowsProc(HWND hwnd, LPARAM lParam)
-{
-    FindWindowData* data = reinterpret_cast<FindWindowData*>(lParam);
-
-    if (!IsWindowVisible(hwnd))
-        return TRUE;
-
-    LONG style = GetWindowLong(hwnd, GWL_STYLE);
-    if (!(style & WS_OVERLAPPEDWINDOW) && !(style & WS_POPUP))
-        return TRUE;
-
-    wchar_t windowTitle[WINDOW_TITLE_BUFFER_SIZE];
-    GetWindowTextW(hwnd, windowTitle, sizeof(windowTitle) / sizeof(wchar_t));
-
-    std::wstring title(windowTitle);
-    std::wstring target = data->targetTitle;
-
-    std::transform(title.begin(), title.end(), title.begin(), ::towlower);
-    std::transform(target.begin(), target.end(), target.begin(), ::towlower);
-
-    if (data->partialMatch)
-    {
-        if (title.find(target) != std::wstring::npos)
-        {
-            data->foundWindow = hwnd;
-            return FALSE;
-        }
-    }
-    else
-    {
-        if (title == target)
-        {
-            data->foundWindow = hwnd;
-            return FALSE;
-        }
-    }
-
-    return TRUE;
-}
-
 HWND WindowFinder::FindWindowByProcessName(const std::wstring& processName)
 {
     if (processName.empty())
@@ -93,7 +26,18 @@ HWND WindowFinder::FindWindowByProcessName(const std::wstring& processName)
             return TRUE;
 
         LONG style = GetWindowLong(hwnd, GWL_STYLE);
-        if (!(style & WS_OVERLAPPEDWINDOW) && !(style & WS_POPUP))
+        // 允许普通窗口、弹出窗口、以及没有标题栏的窗口
+        if (!((style & WS_OVERLAPPEDWINDOW) || 
+              (style & WS_POPUP) || 
+              ((style & WS_OVERLAPPED) && !(style & WS_CAPTION))))
+            return TRUE;
+
+        // 排除控制台和终端窗口
+        wchar_t className[256];
+        GetClassNameW(hwnd, className, sizeof(className) / sizeof(wchar_t));
+        if (wcscmp(className, L"ConsoleWindowClass") == 0 ||
+            wcscmp(className, L"Windows.UI.Xaml.Hosting.DesktopWindowXamlSource") == 0 ||
+            wcscmp(className, L"WindowsForms10.Window.8.app.0.378734a") == 0)
             return TRUE;
 
         windows.push_back(hwnd);
@@ -107,6 +51,7 @@ HWND WindowFinder::FindWindowByProcessName(const std::wstring& processName)
         
         std::transform(name.begin(), name.end(), name.begin(), ::towlower);
 
+        // 只支持严格的进程名匹配
         if (name == targetProcessName)
         {
             return hwnd;

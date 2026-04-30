@@ -99,13 +99,6 @@ bool CommandExecutor::Execute(const CommandLineOptions& options)
         WriteBilingualOut(zh.c_str(), en.c_str());
         targetWindow = WindowFinder::FindWindowByProcessName(options.targetProcessName);
     }
-    else if (!options.targetWindowTitle.empty())
-    {
-        std::wstring zh = L"正在通过窗口标题查找: " + options.targetWindowTitle;
-        std::wstring en = L"Finding window by title: " + options.targetWindowTitle;
-        WriteBilingualOut(zh.c_str(), en.c_str());
-        targetWindow = WindowFinder::FindWindowByTitle(options.targetWindowTitle);
-    }
 
     if (!targetWindow || !IsWindowValid(targetWindow))
     {

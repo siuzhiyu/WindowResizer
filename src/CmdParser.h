@@ -20,7 +20,6 @@ struct CommandLineOptions
 {
     std::wstring targetExePath;
     std::wstring targetExeArgs;
-    std::wstring targetWindowTitle;
     std::wstring targetProcessName;
     int width = 0;
     int height = 0;

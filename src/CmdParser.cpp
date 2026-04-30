@@ -138,14 +138,6 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
             continue;
         }
 
-        if (arg == L"-t" || arg == L"--title")
-        {
-            if (i + 1 < argc)
-            {
-                options.targetWindowTitle = argv[++i];
-            }
-            continue;
-        }
 
         if (arg == L"-size" || arg == L"-res")
         {
@@ -231,10 +223,6 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
                     options.targetExeArgs += arg;
                 }
             }
-            else if (options.targetWindowTitle.empty())
-            {
-                options.targetWindowTitle = arg;
-            }
             else if (options.width == 0 && options.height == 0)
             {
                 ParseResolution(arg, options.width, options.height);
@@ -242,7 +230,7 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
         }
     }
 
-    if (!options.targetExePath.empty() || !options.targetWindowTitle.empty() || !options.targetProcessName.empty())
+    if (!options.targetExePath.empty() || !options.targetProcessName.empty())
     {
         options.isValid = true;
     }
@@ -287,14 +275,12 @@ void CmdParser::PrintUsage()
         WriteToConsole(L"WindowResizer-imgui.exe [选项]\n\n");
         WriteToConsole(L"命令行模式用法:\n");
         WriteToConsole(L"  WindowResizer-imgui.exe [目标程序路径] [-分辨率] [-功能选项] [-- 目标程序参数]\n");
-        WriteToConsole(L"  WindowResizer-imgui.exe [窗口标题] [-分辨率] [-功能选项]\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe [目标程序路径] [-分辨率] [-功能选项]\n");
         WriteToConsole(L"  WindowResizer-imgui.exe -p [进程名] [-分辨率] [-功能选项]\n\n");
         WriteToConsole(L"参数说明:\n");
         WriteToConsole(L"  [目标程序路径]             直接启动程序并调整其窗口\n");
-        WriteToConsole(L"  [窗口标题]                  指定要调整的已运行窗口标题（可以是部分标题）\n");
         WriteToConsole(L"  -p, --process [进程名]      指定目标进程名（如 notepad.exe）\n");
         WriteToConsole(L"                               应用场景:批处理脚本、开机自动调整已运行窗口\n");
-        WriteToConsole(L"  -t, --title [窗口标题]      指定目标窗口标题（与直接写标题功能相同）\n");
         WriteToConsole(L"  --                         参数分隔符，--之后的所有参数都传递给目标程序\n");
         WriteToConsole(L"                             当目标程序参数与WindowResizer参数冲突时使用\n\n");
         WriteToConsole(L"等待窗口选项:\n");
@@ -310,9 +296,8 @@ void CmdParser::PrintUsage()
         WriteToConsole(L"  -maximize, -max, -m        最大化窗口\n");
         WriteToConsole(L"  -h, --help                 显示此帮助信息\n\n");
         WriteToConsole(L"示例:\n");
-        WriteToConsole(L"  WindowResizer-imgui.exe \"记事本\" -size 1920 1080 -st\n");
         WriteToConsole(L"  WindowResizer-imgui.exe -p notepad.exe -scale 150\n");
-        WriteToConsole(L"  WindowResizer-imgui.exe \"Google Chrome\" -scale 120 -c\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe -p chrome.exe -size 1920 1080 -c\n");
         WriteToConsole(L"  WindowResizer-imgui.exe \"game.exe\" -size 1920 1080 -center -- -debug -log\n");
         WriteToConsole(L"                             ^-- 将 -debug -log 传递给目标程序\n");
         WriteToConsole(L"  WindowResizer-imgui.exe \"app.exe\" -hidetitle -- --config settings.ini --verbose\n");
@@ -324,14 +309,11 @@ void CmdParser::PrintUsage()
         WriteToConsole(L"WindowResizer-imgui.exe [options]\n\n");
         WriteToConsole(L"Command line usage:\n");
         WriteToConsole(L"  WindowResizer-imgui.exe [target exe path] [-resolution] [-feature options] [-- passthrough args]\n");
-        WriteToConsole(L"  WindowResizer-imgui.exe [window title] [-resolution] [-feature options]\n");
         WriteToConsole(L"  WindowResizer-imgui.exe -p [process name] [-resolution] [-feature options]\n\n");
         WriteToConsole(L"Parameters:\n");
         WriteToConsole(L"  [target exe path]          Launch and resize the program window\n");
-        WriteToConsole(L"  [window title]             Target a running window by title (partial match)\n");
         WriteToConsole(L"  -p, --process [name]       Target by process name (e.g. notepad.exe)\n");
         WriteToConsole(L"                             Use case: batch scripts, auto-resize on startup\n");
-        WriteToConsole(L"  -t, --title [title]        Specify target window title\n");
         WriteToConsole(L"  --                         Delimiter, all args after -- are passed to target program\n");
         WriteToConsole(L"                             Use when target program args conflict with WindowResizer args\n\n");
         WriteToConsole(L"Window wait options:\n");
