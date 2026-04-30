@@ -47,9 +47,34 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
         return options;
     }
 
+    bool passthroughMode = false;
+    
     for (int i = 1; i < argc; ++i)
     {
         std::wstring arg = argv[i];
+
+        if (arg == L"--")
+        {
+            passthroughMode = true;
+            continue;
+        }
+
+        if (passthroughMode)
+        {
+            if (!options.targetExeArgs.empty())
+            {
+                options.targetExeArgs += L" ";
+            }
+            if (arg.find(L' ') != std::wstring::npos)
+            {
+                options.targetExeArgs += L"\"" + arg + L"\"";
+            }
+            else
+            {
+                options.targetExeArgs += arg;
+            }
+            continue;
+        }
 
         if (arg == L"-h" || arg == L"--help")
         {
@@ -158,13 +183,31 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
 
         if (arg[0] == L'-')
         {
-            if (g_cmdLang == Language::Chinese)
+            if (!options.targetExePath.empty())
             {
-                WriteToConsole((L"未知选项: " + arg + L"\n").c_str());
+                if (!options.targetExeArgs.empty())
+                {
+                    options.targetExeArgs += L" ";
+                }
+                if (arg.find(L' ') != std::wstring::npos)
+                {
+                    options.targetExeArgs += L"\"" + arg + L"\"";
+                }
+                else
+                {
+                    options.targetExeArgs += arg;
+                }
             }
             else
             {
-                WriteToConsole((L"Unknown option: " + arg + L"\n").c_str());
+                if (g_cmdLang == Language::Chinese)
+                {
+                    WriteToConsole((L"未知选项: " + arg + L"\n").c_str());
+                }
+                else
+                {
+                    WriteToConsole((L"Unknown option: " + arg + L"\n").c_str());
+                }
             }
         }
         else
@@ -172,6 +215,21 @@ CommandLineOptions CmdParser::Parse(int argc, wchar_t* argv[])
             if (options.targetExePath.empty() && IsExePath(arg))
             {
                 options.targetExePath = arg;
+            }
+            else if (!options.targetExePath.empty())
+            {
+                if (!options.targetExeArgs.empty())
+                {
+                    options.targetExeArgs += L" ";
+                }
+                if (arg.find(L' ') != std::wstring::npos)
+                {
+                    options.targetExeArgs += L"\"" + arg + L"\"";
+                }
+                else
+                {
+                    options.targetExeArgs += arg;
+                }
             }
             else if (options.targetWindowTitle.empty())
             {
@@ -228,7 +286,7 @@ void CmdParser::PrintUsage()
     {
         WriteToConsole(L"WindowResizer-imgui.exe [选项]\n\n");
         WriteToConsole(L"命令行模式用法:\n");
-        WriteToConsole(L"  WindowResizer-imgui.exe [目标程序路径] [-分辨率] [-功能选项]\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe [目标程序路径] [-分辨率] [-功能选项] [-- 目标程序参数]\n");
         WriteToConsole(L"  WindowResizer-imgui.exe [窗口标题] [-分辨率] [-功能选项]\n");
         WriteToConsole(L"  WindowResizer-imgui.exe -p [进程名] [-分辨率] [-功能选项]\n\n");
         WriteToConsole(L"参数说明:\n");
@@ -236,7 +294,9 @@ void CmdParser::PrintUsage()
         WriteToConsole(L"  [窗口标题]                  指定要调整的已运行窗口标题（可以是部分标题）\n");
         WriteToConsole(L"  -p, --process [进程名]      指定目标进程名（如 notepad.exe）\n");
         WriteToConsole(L"                               应用场景:批处理脚本、开机自动调整已运行窗口\n");
-        WriteToConsole(L"  -t, --title [窗口标题]      指定目标窗口标题（与直接写标题功能相同）\n\n");
+        WriteToConsole(L"  -t, --title [窗口标题]      指定目标窗口标题（与直接写标题功能相同）\n");
+        WriteToConsole(L"  --                         参数分隔符，--之后的所有参数都传递给目标程序\n");
+        WriteToConsole(L"                             当目标程序参数与WindowResizer参数冲突时使用\n\n");
         WriteToConsole(L"等待窗口选项:\n");
         WriteToConsole(L"  -wait, -w [毫秒]            等待窗口出现的超时时间（默认3000ms）\n");
         WriteToConsole(L"  -nowait                     无限等待窗口出现（按 Ctrl+C 取消）\n\n");
@@ -253,13 +313,17 @@ void CmdParser::PrintUsage()
         WriteToConsole(L"  WindowResizer-imgui.exe \"记事本\" -size 1920 1080 -st\n");
         WriteToConsole(L"  WindowResizer-imgui.exe -p notepad.exe -scale 150\n");
         WriteToConsole(L"  WindowResizer-imgui.exe \"Google Chrome\" -scale 120 -c\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe \"game.exe\" -size 1920 1080 -center -- -debug -log\n");
+        WriteToConsole(L"                             ^-- 将 -debug -log 传递给目标程序\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe \"app.exe\" -hidetitle -- --config settings.ini --verbose\n");
+        WriteToConsole(L"                             ^-- 将 --config --verbose 传递给目标程序\n");
         WriteToConsole(L"\n");
     }
     else
     {
         WriteToConsole(L"WindowResizer-imgui.exe [options]\n\n");
         WriteToConsole(L"Command line usage:\n");
-        WriteToConsole(L"  WindowResizer-imgui.exe [target exe path] [-resolution] [-feature options]\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe [target exe path] [-resolution] [-feature options] [-- passthrough args]\n");
         WriteToConsole(L"  WindowResizer-imgui.exe [window title] [-resolution] [-feature options]\n");
         WriteToConsole(L"  WindowResizer-imgui.exe -p [process name] [-resolution] [-feature options]\n\n");
         WriteToConsole(L"Parameters:\n");
@@ -267,7 +331,9 @@ void CmdParser::PrintUsage()
         WriteToConsole(L"  [window title]             Target a running window by title (partial match)\n");
         WriteToConsole(L"  -p, --process [name]       Target by process name (e.g. notepad.exe)\n");
         WriteToConsole(L"                             Use case: batch scripts, auto-resize on startup\n");
-        WriteToConsole(L"  -t, --title [title]        Specify target window title\n\n");
+        WriteToConsole(L"  -t, --title [title]        Specify target window title\n");
+        WriteToConsole(L"  --                         Delimiter, all args after -- are passed to target program\n");
+        WriteToConsole(L"                             Use when target program args conflict with WindowResizer args\n\n");
         WriteToConsole(L"Window wait options:\n");
         WriteToConsole(L"  -wait, -w [ms]             Wait timeout for window (default 3000ms)\n");
         WriteToConsole(L"  -nowait                    Infinite wait (Ctrl+C to cancel)\n\n");
@@ -284,6 +350,10 @@ void CmdParser::PrintUsage()
         WriteToConsole(L"  WindowResizer-imgui.exe \"Notepad\" -size 1920 1080 -st\n");
         WriteToConsole(L"  WindowResizer-imgui.exe -p notepad.exe -scale 150\n");
         WriteToConsole(L"  WindowResizer-imgui.exe \"Google Chrome\" -scale 120 -c\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe \"game.exe\" -size 1920 1080 -center -- -debug -log\n");
+        WriteToConsole(L"                             ^-- Pass -debug -log to target program\n");
+        WriteToConsole(L"  WindowResizer-imgui.exe \"app.exe\" -hidetitle -- --config settings.ini --verbose\n");
+        WriteToConsole(L"                             ^-- Pass --config --verbose to target program\n");
         WriteToConsole(L"\n");
     }
 }

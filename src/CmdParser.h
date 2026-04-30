@@ -19,6 +19,7 @@ const int CONSOLE_FLUSH_DELAY_MS = 50;
 struct CommandLineOptions
 {
     std::wstring targetExePath;
+    std::wstring targetExeArgs;
     std::wstring targetWindowTitle;
     std::wstring targetProcessName;
     int width = 0;

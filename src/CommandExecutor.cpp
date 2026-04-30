@@ -74,7 +74,7 @@ bool CommandExecutor::Execute(const CommandLineOptions& options)
             std::wstring zh = L"正在启动程序并等待窗口... 超时: " + std::to_wstring(options.waitTimeout) + L"ms";
             std::wstring en = L"Launching program and waiting for window... timeout: " + std::to_wstring(options.waitTimeout) + L"ms";
             WriteBilingualOut(zh.c_str(), en.c_str());
-            targetWindow = LaunchAndWaitForWindow(options.targetExePath, options.waitTimeout);
+            targetWindow = LaunchAndWaitForWindow(options.targetExePath, options, options.waitTimeout);
             if (!targetWindow)
             {
                 WriteBilingualErr(L"错误：启动程序后未找到窗口", L"Error: window not found after launch");
@@ -84,7 +84,7 @@ bool CommandExecutor::Execute(const CommandLineOptions& options)
         else
         {
             WriteBilingualOut(L"正在启动程序并无限等待窗口... (-nowait 模式)", L"Launching program and infinite waiting... (-nowait mode)");
-            targetWindow = LaunchAndWaitForWindow(options.targetExePath, -1);
+            targetWindow = LaunchAndWaitForWindow(options.targetExePath, options, -1);
             if (!targetWindow)
             {
                 WriteBilingualErr(L"错误：启动程序后未找到窗口", L"Error: window not found after launch");
@@ -165,7 +165,7 @@ bool CommandExecutor::Execute(const CommandLineOptions& options)
     return true;
 }
 
-HWND CommandExecutor::LaunchAndWaitForWindow(const std::wstring& exePath, int timeoutMs)
+HWND CommandExecutor::LaunchAndWaitForWindow(const std::wstring& exePath, const CommandLineOptions& options, int timeoutMs)
 {
     STARTUPINFOW si = { sizeof(si) };
     PROCESS_INFORMATION pi = { 0 };
@@ -174,6 +174,10 @@ HWND CommandExecutor::LaunchAndWaitForWindow(const std::wstring& exePath, int ti
     si.wShowWindow = SW_SHOWNORMAL;
 
     std::wstring cmdLine = L"\"" + exePath + L"\"";
+    if (!options.targetExeArgs.empty())
+    {
+        cmdLine += L" " + options.targetExeArgs;
+    }
     std::vector<wchar_t> cmdLineBuffer(cmdLine.begin(), cmdLine.end());
     cmdLineBuffer.push_back(L'\0');
 
