@@ -280,9 +280,9 @@ void CmdParser::PrintUsage()
         WriteToConsole(L"参数说明:\n");
         WriteToConsole(L"  [目标程序路径]             直接启动程序并调整其窗口\n");
         WriteToConsole(L"  -p, --process [进程名]      指定目标进程名（如 notepad.exe）\n");
-        WriteToConsole(L"                               应用场景:批处理脚本、开机自动调整已运行窗口\n");
-        WriteToConsole(L"  --                         参数分隔符，--之后的所有参数都传递给目标程序\n");
-        WriteToConsole(L"                             当目标程序参数与WindowResizer参数冲突时使用\n\n");
+        WriteToConsole(L"                              应用场景:批处理脚本、开机自动调整已运行窗口\n");
+        WriteToConsole(L"  --                          参数分隔符，--之后的所有参数都传递给目标程序\n");
+        WriteToConsole(L"                              当目标程序参数与WindowResizer参数冲突时使用\n\n");
         WriteToConsole(L"等待窗口选项:\n");
         WriteToConsole(L"  -wait, -w [毫秒]            等待窗口出现的超时时间（默认3000ms）\n");
         WriteToConsole(L"  -nowait                     无限等待窗口出现（按 Ctrl+C 取消）\n\n");

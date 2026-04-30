@@ -25,19 +25,17 @@ HWND WindowFinder::FindWindowByProcessName(const std::wstring& processName)
         if (!IsWindowVisible(hwnd))
             return TRUE;
 
-        LONG style = GetWindowLong(hwnd, GWL_STYLE);
-        // 允许普通窗口、弹出窗口、以及没有标题栏的窗口
-        if (!((style & WS_OVERLAPPEDWINDOW) || 
-              (style & WS_POPUP) || 
-              ((style & WS_OVERLAPPED) && !(style & WS_CAPTION))))
-            return TRUE;
-
         // 排除控制台和终端窗口
         wchar_t className[256];
         GetClassNameW(hwnd, className, sizeof(className) / sizeof(wchar_t));
         if (wcscmp(className, L"ConsoleWindowClass") == 0 ||
             wcscmp(className, L"Windows.UI.Xaml.Hosting.DesktopWindowXamlSource") == 0 ||
             wcscmp(className, L"WindowsForms10.Window.8.app.0.378734a") == 0)
+            return TRUE;
+
+        // 只检查基本窗口样式，不限制窗口类型
+        LONG style = GetWindowLong(hwnd, GWL_STYLE);
+        if (!(style & WS_VISIBLE))
             return TRUE;
 
         windows.push_back(hwnd);
