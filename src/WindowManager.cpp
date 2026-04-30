@@ -53,15 +53,28 @@ void StopMouseHook()
     s_hwndMainView = nullptr;
 }
 
-void InitAppData()
-{
-}
-
 bool IsWindowValid()
 {
     if (g_appState.hTargetWindow == nullptr) return false;
     if (!IsWindow(g_appState.hTargetWindow)) return false;
     return true;
+}
+
+void CenterWindowOnMonitor(HWND hwnd)
+{
+    if (!hwnd || !IsWindow(hwnd)) return;
+    RECT windowRect;
+    GetWindowRect(hwnd, &windowRect);
+    HMONITOR hMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO monitorInfo = {sizeof(monitorInfo)};
+    if (GetMonitorInfo(hMonitor, &monitorInfo))
+    {
+        int windowWidth = windowRect.right - windowRect.left;
+        int windowHeight = windowRect.bottom - windowRect.top;
+        int nX = monitorInfo.rcWork.left + ((monitorInfo.rcWork.right - monitorInfo.rcWork.left) - windowWidth) / 2;
+        int nY = monitorInfo.rcWork.top + ((monitorInfo.rcWork.bottom - monitorInfo.rcWork.top) - windowHeight) / 2;
+        SetWindowPos(hwnd, NULL, nX, nY, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+    }
 }
 
 void UpdateSizeShow(int width, int height)
@@ -220,16 +233,7 @@ void ApplySelectedMode()
 void CenterWindow()
 {
     if (!IsWindowValid()) return;
-    RECT windowRect;
-    GetWindowRect(g_appState.hTargetWindow, &windowRect);
-
-    HMONITOR hMonitor = MonitorFromWindow(g_appState.hTargetWindow, MONITOR_DEFAULTTONEAREST);
-    MONITORINFO monitorInfo = {sizeof(monitorInfo)};
-    GetMonitorInfo(hMonitor, &monitorInfo);
-
-    int nX = monitorInfo.rcWork.left + ((monitorInfo.rcWork.right - monitorInfo.rcWork.left) - (windowRect.right - windowRect.left)) / 2;
-    int nY = monitorInfo.rcWork.top + ((monitorInfo.rcWork.bottom - monitorInfo.rcWork.top) - (windowRect.bottom - windowRect.top)) / 2;
-    SetWindowPos(g_appState.hTargetWindow, NULL, nX, nY, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+    CenterWindowOnMonitor(g_appState.hTargetWindow);
 }
 
 void MaximizeWindow()

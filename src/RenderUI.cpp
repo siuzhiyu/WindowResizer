@@ -5,6 +5,13 @@
 #include <shellapi.h>
 #include <cstdio>
 
+enum DWM_WINDOW_CORNER_PREFERENCE {
+    DWMWCP_DEFAULT = 0,
+    DWMWCP_DONOTROUND = 1,
+    DWMWCP_ROUND = 2,
+    DWMWCP_ROUNDSMALL = 3
+};
+
 void RenderSettingsPopup();
 void RenderAboutPopup();
 void RenderHelpPopup();
@@ -100,26 +107,13 @@ void RenderUI()
     if (!s_windowRounded && hwnd)
     {
         s_windowRounded = true;
-        
-        typedef enum DWMWINDOWATTRIBUTE {
-            DWMWA_WINDOW_CORNER_PREFERENCE = 33
-        } DWMWINDOWATTRIBUTE;
-        
-        typedef enum DWM_WINDOW_CORNER_PREFERENCE {
-            DWMWCP_DEFAULT = 0,
-            DWMWCP_DONOTROUND = 1,
-            DWMWCP_ROUND = 2,
-            DWMWCP_ROUNDSMALL = 3
-        } DWM_WINDOW_CORNER_PREFERENCE;
-        
+
         if (s_pDwmSetWindowAttribute)
         {
             DWM_WINDOW_CORNER_PREFERENCE preference = DWMWCP_ROUND;
-            s_pDwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, &preference, sizeof(preference));
+            s_pDwmSetWindowAttribute(hwnd, 33, &preference, sizeof(preference));
         }
     }
-
-    const float title_bar_height = 28.0f;
 
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 0));

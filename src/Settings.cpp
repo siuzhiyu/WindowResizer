@@ -5,20 +5,30 @@
 #include <windows.h>
 #include <cstdio>
 
+namespace
+{
+    static void SetLanguageToAppState(const char* lang)
+    {
+        static char langBuffer[32];
+        strncpy_s(langBuffer, sizeof(langBuffer), lang, _TRUNCATE);
+        g_appState.strLanguage = langBuffer;
+    }
+}
+
 void MigrateSettings()
 {
     std::string oldPath = GetInstallPath() + "\\settings.ini";
     if (GetFileAttributesA(oldPath.c_str()) != INVALID_FILE_ATTRIBUTES)
     {
-        FILE* file = fopen(oldPath.c_str(), "r");
-        if (file)
+        FILE* file = nullptr;
+    if (fopen_s(&file, oldPath.c_str(), "r") == 0 && file)
         {
             char line[256];
             while (fgets(line, sizeof(line), file))
             {
                 if (strstr(line, "ThemeMode=")) g_appState.nThemeMode = atoi(strchr(line, '=') + 1);
                 else if (strstr(line, "AdminMode=")) g_appState.bAdminMode = atoi(strchr(line, '=') + 1);
-                else if (strstr(line, "Language=")) 
+                else if (strstr(line, "Language="))
                 {
                     char* lang = strchr(line, '=') + 1;
                     if (lang)
@@ -26,9 +36,7 @@ void MigrateSettings()
                         size_t len = strlen(lang);
                         if (len > 0 && lang[len-1] == '\n') lang[len-1] = '\0';
                         if (len > 1 && lang[len-2] == '\r') lang[len-2] = '\0';
-                        static char langBuffer[32];
-                        strncpy_s(langBuffer, sizeof(langBuffer), lang, _TRUNCATE);
-                        g_appState.strLanguage = langBuffer;
+                        SetLanguageToAppState(lang);
                     }
                 }
             }
@@ -56,12 +64,10 @@ void SaveSettings()
         }
     }
     std::string currentLangStr = LanguageManager::GetInstance().GetCurrentLanguage();
-    static char langBuffer[32];
-    strncpy_s(langBuffer, sizeof(langBuffer), currentLangStr.c_str(), _TRUNCATE);
-    g_appState.strLanguage = langBuffer;
+    SetLanguageToAppState(currentLangStr.c_str());
     std::string path = GetSettingsFilePath();
-    FILE* file = fopen(path.c_str(), "w");
-    if (file) { fprintf(file, "[Settings]\nVersion=%d\nThemeMode=%d\nAdminMode=%d\nInstallPath=%s\nWindowX=%d\nWindowY=%d\nLanguage=%s\n", CURRENT_VERSION, g_appState.nThemeMode, g_appState.bAdminMode, GetInstallPath().c_str(), g_appState.nWindowX, g_appState.nWindowY, g_appState.strLanguage); fclose(file); }
+    FILE* file = nullptr;
+    if (fopen_s(&file, path.c_str(), "w") == 0 && file) { fprintf(file, "[Settings]\nVersion=%d\nThemeMode=%d\nAdminMode=%d\nInstallPath=%s\nWindowX=%d\nWindowY=%d\nLanguage=%s\n", CURRENT_VERSION, g_appState.nThemeMode, g_appState.bAdminMode, GetInstallPath().c_str(), g_appState.nWindowX, g_appState.nWindowY, g_appState.strLanguage); fclose(file); }
 }
 
 void LoadSettings()
@@ -73,8 +79,8 @@ void LoadSettings()
     g_appState.strLanguage = "";
     MigrateSettings();
     std::string path = GetSettingsFilePath();
-    FILE* file = fopen(path.c_str(), "r");
-    if (file)
+    FILE* file = nullptr;
+    if (fopen_s(&file, path.c_str(), "r") == 0 && file)
     {
         char line[256];
         while (fgets(line, sizeof(line), file))
@@ -91,9 +97,7 @@ void LoadSettings()
                     size_t len = strlen(lang);
                     if (len > 0 && lang[len-1] == '\n') lang[len-1] = '\0';
                     if (len > 1 && lang[len-2] == '\r') lang[len-2] = '\0';
-                    static char langBuffer[32];
-                    strncpy_s(langBuffer, sizeof(langBuffer), lang, _TRUNCATE);
-                    g_appState.strLanguage = langBuffer;
+                    SetLanguageToAppState(lang);
                 }
             }
         }

@@ -1,1 +1,1 @@
-d:\ WindowResizer\project\Release\WindowResizer-imgui.exe
+D:\ WindowResizer\project\Release\WindowResizer-imgui.exe

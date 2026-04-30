@@ -39,6 +39,11 @@ bool RunAsAdmin()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+    (void)hInstance;
+    (void)hPrevInstance;
+    (void)lpCmdLine;
+    (void)nCmdShow;
+
     int argc;
     wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
@@ -203,8 +208,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     ImGui_ImplWin32_Init(g_hMainWindow);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
-    InitAppData();
-
     RenderLoop();
 
     SaveSettings();
